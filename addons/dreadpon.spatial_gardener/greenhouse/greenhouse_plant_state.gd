@@ -1,14 +1,11 @@
-tool
-extends "../utility/input_field_resource/input_field_resource.gd"
+@tool
+extends InputFieldResource
+class_name Greenhouse_PlantState
 
 
 #-------------------------------------------------------------------------------
 # A middle-man between the plant and the UI/painting/placement logic
 #-------------------------------------------------------------------------------
-
-
-const Greenhouse_Plant = preload("greenhouse_plant.gd")
-
 
 var plant_brush_active:bool = false
 var plant_label:String = ''
@@ -28,7 +25,7 @@ signal req_octree_recenter(plant)
 #-------------------------------------------------------------------------------
 
 
-func _init().():
+func _init():
 	set_meta("class", "Greenhouse_PlantState")
 	resource_name = "Greenhouse_PlantState"
 	# A workaround to trigger the initial creation of a plant
@@ -71,7 +68,7 @@ func on_prop_action_executed_on_LOD_variant(prop_action, final_val, LOD_variant,
 func _modify_prop(prop:String, val):
 	match prop:
 		"plant/plant":
-			if !(val is Greenhouse_Plant):
+			if !(is_instance_of(val, Greenhouse_Plant)):
 				val = Greenhouse_Plant.new()
 			
 			FunLib.ensure_signal(val, "changed", self, "on_changed_plant")
@@ -92,8 +89,8 @@ func _modify_prop(prop:String, val):
 #-------------------------------------------------------------------------------
 
 
-func set_undo_redo(val:UndoRedo):
-	.set_undo_redo(val)
+func set_undo_redo(val:EditorUndoRedoManager):
+	super.set_undo_redo(val)
 	plant.set_undo_redo(_undo_redo)
 
 
@@ -168,7 +165,7 @@ func get_prop_tooltip(prop:String) -> String:
 		"plant/plant_brush_active":
 			return "The flag that defines if plant will be used during painting or not"
 		"plant/plant_brush_active":
-			return "The label to be displayed on top of the plant's thumbnail"
+			return "The label to be displayed checked top of the plant's thumbnail"
 		"plant/plant":
 			return "The contained plant itself"
 	

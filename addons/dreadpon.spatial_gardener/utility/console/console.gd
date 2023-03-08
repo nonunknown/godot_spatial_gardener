@@ -1,12 +1,10 @@
 extends Control
+class_name Console
 
+@onready var input_field:TextEdit = $VBoxContainer/InputField
+@onready var output_field:RichTextLabel = $VBoxContainer/OutputField
 
-const Gardener = preload("../../gardener/gardener.gd")
-
-onready var input_field:TextEdit = $VBoxContainer/InputField
-onready var output_field:RichTextLabel = $VBoxContainer/OutputField
-
-export(Array, NodePath) var block_input_PTH:Array = []
+@export var block_input_PTH:Array = [] # (Array, NodePath)
 var block_input:Array = []
 
 var last_mouse_mode:int
@@ -61,7 +59,7 @@ func set_nodes_input_state(state:bool):
 
 
 func try_execute_command():
-	if input_field.text.empty(): return
+	if input_field.text.is_empty(): return
 	var result = parse_and_execute(input_field.text)
 	clear_command()
 	print_output(result)
@@ -76,7 +74,7 @@ func print_output(string:String):
 
 
 func parse_and_execute(string:String):
-	var args:PoolStringArray = string.split(" ")
+	var args:PackedStringArray = string.split(" ")
 	
 	match args[0]:
 		"dump_octrees":
@@ -84,7 +82,7 @@ func parse_and_execute(string:String):
 		"dump_scene_tree":
 			return debug_scene_tree()
 		"clear":
-			output_field.bbcode_text = ""
+			output_field.text = ""
 			return ""
 		_:
 			return "[color=red]Undefined command[/color]"
@@ -98,18 +96,18 @@ func dump_octrees(args:Array = []):
 	var octree_index := -1
 	
 	if args.size() > 1:
-		if current_scene.has_node(args[1]) && current_scene.get_node(args[1]) is Gardener:
+		if current_scene.has_node(args[1]) && is_instance_of(current_scene.get_node(args[1]), Gardener):
 			gardener_path = args[1]
 		else:
 			return "[color=red]'%s' wrong node path in argument '%d'[/color]" % [args[0], 1]
 	
 	if args.size() > 2:
-		if args[2].is_valid_integer():
+		if args[2].is_valid_int():
 			octree_index = args[2].to_int()
 		else:
 			return "[color=red]'%s' wrong type in argument '%d'[/color]" % [args[0], 2]
 	
-	if gardener_path.empty():
+	if gardener_path.is_empty():
 		return dump_octrees_from_node(current_scene)
 	elif octree_index < 0:
 		return dump_octrees_from_gardener(current_scene.get_node(args[1]))
@@ -120,7 +118,7 @@ func dump_octrees(args:Array = []):
 func dump_octrees_from_node(node:Node):
 	var output := ""
 	
-	if node is Gardener:
+	if is_instance_of(node, Gardener):
 		output += dump_octrees_from_gardener(node)
 	else:
 		for child in node.get_children():

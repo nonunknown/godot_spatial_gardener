@@ -3,13 +3,13 @@ render_mode blend_mix,cull_disabled,unshaded,depth_draw_opaque;
 
 
 // Base color + opacity
-uniform vec4 albedo : hint_color;
+uniform vec4 albedo : source_color;
 // Brush diameter
 uniform float proximity_multiplier = 1.0;
 // Distance at which proximity highlight occurs
 uniform float proximity_treshold = 0.4;
-
-
+// Add depth texture as uniform because name changed from G3 to G4
+uniform sampler2D DEPTH_TEXTURE : hint_depth_texture, filter_linear_mipmap;
 void fragment() {
 	ALBEDO = albedo.rgb;
 	

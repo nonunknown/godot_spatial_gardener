@@ -1,5 +1,6 @@
-tool
-extends "ui_if_thumbnail_base.gd"
+@tool
+extends UI_IF_ThumbnailBase
+class_name UI_IF_ThumbnailObject
 
 
 #-------------------------------------------------------------------------------
@@ -19,7 +20,7 @@ var _thumb = null
 #-------------------------------------------------------------------------------
 
 
-func _init(__init_val, __labelText:String = "NONE", __prop_name:String = "", settings:Dictionary = {}).(__init_val, __labelText, __prop_name, settings):
+func _init(__init_val,__labelText:String = "NONE",__prop_name:String = "",settings:Dictionary = {}):
 	set_meta("class", "UI_IF_ThumbnailObject")
 
 
@@ -37,7 +38,7 @@ func _ready():
 
 
 func _update_ui_to_prop_action(prop_action:PropAction, final_val):
-	if prop_action is PA_PropSet || prop_action is PA_PropEdit:
+	if is_instance_of(prop_action, PA_PropSet) || is_instance_of(prop_action, PA_PropEdit):
 		_update_ui_to_val(final_val)
 
 
